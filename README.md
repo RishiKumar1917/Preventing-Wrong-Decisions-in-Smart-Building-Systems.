@@ -439,6 +439,5 @@ git commit -m "Add humanized IoT attack detection README"
 git push origin main
 ```
 
-Done! Your README is now live and easy to read.
 
 
