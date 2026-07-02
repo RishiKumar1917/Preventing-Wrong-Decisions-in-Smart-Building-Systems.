@@ -447,7 +447,7 @@ git push origin main
 
 ## 🚀 Advanced Hybrid IoT IDS Decision Engine & Streamlit Web UI
 
-An advanced, high-performance hybrid intrusion detection system has been integrated into the repository root.
+An advanced, high-performance hybrid intrusion detection system has been integrated into the subdirectory **Preventing-Wrong-Decisions-in-Smart-Building-Systems-IBM**.
 
 ### Features
 1. **Hybrid Anomaly Detection:** Combines LSTM Autoencoder anomaly scores (3-sigma reconstruction error limits) with Random Forest and Gradient Boosting classifiers.
@@ -462,17 +462,22 @@ An advanced, high-performance hybrid intrusion detection system has been integra
    pip install pandas numpy scikit-learn tensorflow streamlit plotly matplotlib
    ```
 
-2. **Run Interactive Dashboard Web UI:**
+2. **Navigate to the codebase folder:**
+   ```bash
+   cd Preventing-Wrong-Decisions-in-Smart-Building-Systems-IBM
+   ```
+
+3. **Run Interactive Dashboard Web UI:**
    ```bash
    streamlit run app.py
    ```
 
-3. **Run Automated Simulation Pipeline:**
+4. **Run Automated Simulation Pipeline:**
    ```bash
    python run_hybrid_demo.py
    ```
 
-4. **Run Unit Tests:**
+5. **Run Unit Tests:**
    ```bash
    python -m unittest test_hybrid_iot_ids.py
    ```
