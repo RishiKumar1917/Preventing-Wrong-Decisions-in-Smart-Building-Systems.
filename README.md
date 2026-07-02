@@ -13,6 +13,23 @@ A high-performance, real-time hybrid security framework for detecting, classifyi
 
 ---
 
+## 🛠️ Technical Rationale: Why LSTM, DHT11, and the Smart Building Edge
+
+### 🧠 Why the LSTM Autoencoder?
+*   **Designed for Sequential Temporal Data:** Temperature and humidity readings from IoT sensors are not isolated events; they form highly correlated temporal sequences (time-series). LSTM (Long Short-Term Memory) cells possess recurrent feedback connections, enabling the model to learn long-term temporal dependencies and establish a reliable behavioral baseline of normal room shifts.
+*   **Edge-Ready & Low Computation:** Traditional deep learning models (like Transformers) are computationally expensive and memory-heavy. An LSTM Autoencoder (configured with 64 and 32 hidden units) offers a lightweight, energy-efficient profile suitable for on-device deployment on resource-constrained **Edge/IoT gateways (such as a Raspberry Pi 4)**. It guarantees low-latency, real-time inference at the edge without relying on constant cloud communication.
+*   **Unsupervised Anomaly Detection:** Real-world network and sensor attacks are constantly evolving, meaning labeled datasets of all future attacks do not exist. An Autoencoder trains *only* on normal operational data, flagging anomalies purely based on elevated reconstruction error (MSE), making it highly resilient to zero-day (previously unseen) attacks.
+
+### 🌡️ Why the DHT11 Sensor? (HVAC Simulation)
+*   **HVAC Climate Regulation:** The DHT11 temperature and humidity sensor is the industry standard for smart climate monitoring. We specifically selected the DHT11 because temperature and humidity are the primary feedback control variables used to regulate **HVAC (Heating, Ventilation, and Air Conditioning) systems** in smart buildings.
+*   **The Threat Vector:** By injecting falsified readings into a DHT11 stream (e.g., simulating extreme heat or zero humidity), an attacker can force a centralized HVAC system to over-cool, over-heat, or run continuously. This results in:
+    1. Massive energy waste and electrical strain on the building.
+    2. Severe occupant discomfort.
+    3. Accelerated wear-and-tear or physical destruction of HVAC compressor/blower hardware.
+*   Simulating DHT11 compromises provides a direct, high-fidelity model of real-world HVAC system attacks and enables us to validate real-time mitigation before physical damage occurs.
+
+---
+
 ## 🌐 Perspective: The Inevitability of IoT and the Cybersecurity Paradigm Shift
 
 ### ⚖️ The Paradox of Comfort vs. Control
