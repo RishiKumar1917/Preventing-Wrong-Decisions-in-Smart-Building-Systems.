@@ -441,3 +441,38 @@ git push origin main
 
 
 
+
+
+---
+
+## 🚀 Advanced Hybrid IoT IDS Decision Engine & Streamlit Web UI
+
+An advanced, high-performance hybrid intrusion detection system has been integrated into the repository root.
+
+### Features
+1. **Hybrid Anomaly Detection:** Combines LSTM Autoencoder anomaly scores (3-sigma reconstruction error limits) with Random Forest and Gradient Boosting classifiers.
+2. **Deterministic Rule Engine:** Employs optimized rules to capture Replay attacks, high-frequency Noise attacks, sudden Drop attacks, and Injection spikes.
+3. **Human-in-the-Loop Feedback:** Pre-packaged with feedback bank capabilities to review alarms and suppress false positives.
+4. **Interactive Dashboard:** Streamlit web UI to monitor multi-sensor streams in real-time.
+
+### How to Run
+
+1. **Prerequisites (Python 3.13 recommended):**
+   ```bash
+   pip install pandas numpy scikit-learn tensorflow streamlit plotly matplotlib
+   ```
+
+2. **Run Interactive Dashboard Web UI:**
+   ```bash
+   streamlit run app.py
+   ```
+
+3. **Run Automated Simulation Pipeline:**
+   ```bash
+   python run_hybrid_demo.py
+   ```
+
+4. **Run Unit Tests:**
+   ```bash
+   python -m unittest test_hybrid_iot_ids.py
+   ```
