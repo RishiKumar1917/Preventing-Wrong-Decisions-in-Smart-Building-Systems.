@@ -153,7 +153,7 @@ Preventing-Wrong-Decisions-in-Smart-Building-Systems/
 │   ├── dht11_dataset_10000.csv                               # Original 10k single-sensor dataset
 │   └── log_temp.csv                                          # Temperature log data
 │
-└── LSTM/                                                     # Archived exploratory work
+└── archive/                                                  # Archived exploratory work
     └── dht11-anomaly-detection-lstm-ae-replay-attack.ipynb   # Jupyter notebook
 ```
 
