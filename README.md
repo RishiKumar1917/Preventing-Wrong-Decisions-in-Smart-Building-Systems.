@@ -1,49 +1,38 @@
 # 🏢 Resilient IoT Intrusion Detection System for Smart Buildings
 
-A high-performance, real-time hybrid security framework for detecting, classifying, and mitigating adversarial attacks on IoT sensor networks (such as DHT11 temperature & humidity sensors) in smart building environments.
+A smart, real-time security system that protects smart buildings from hackers trying to tamper with temperature and humidity sensors (like the DHT11) to hijack heating and cooling systems. 
+
+In this project, we performed an **ARP Spoofing attack** `[ARP Spoofing: An attack where a hacker links their computer to the network gateway to intercept and modify sensor readings]` to hijack and manipulate live sensor data. We then used this hijacked data to train our Machine Learning models, and we developed **Snort Rules** `[Snort Rules: Network security rules used to detect and drop malicious traffic packets]` to identify and block these spoofing attempts in real time.
 
 ---
 
 ## ⚡ Key Upgrades (June/July 2026)
 *   **78.10% Overall Accuracy** on multi-sensor streams.
-*   **100% Precision Replay & Drop Detection** with zero false alarms.
-*   **93.85% Noise Attack Recall** using normalized Shannon entropy.
 *   **Interactive Web UI Dashboard** built with Streamlit and Plotly.
 *   **Human-in-the-Loop Feedback Engine** for continuous adaptive learning.
 
 ---
 
-## 🛠️ Technical Rationale: Why LSTM, DHT11, and the Smart Building Edge
+## ⚠️ The Problem: Why Smart Buildings Need Proactive Security
 
-### 🧠 Why the LSTM Autoencoder?
-*   **Designed for Sequential Temporal Data:** Temperature and humidity readings from IoT sensors are not isolated events; they form highly correlated temporal sequences (time-series). LSTM (Long Short-Term Memory) cells possess recurrent feedback connections, enabling the model to learn long-term temporal dependencies and establish a reliable behavioral baseline of normal room shifts.
-*   **Edge-Ready & Low Computation:** Traditional deep learning models (like Transformers) are computationally expensive and memory-heavy. An LSTM Autoencoder (configured with 64 and 32 hidden units) offers a lightweight, energy-efficient profile suitable for on-device deployment on resource-constrained **Edge/IoT gateways (such as a Raspberry Pi 4)**. It guarantees low-latency, real-time inference at the edge without relying on constant cloud communication.
-*   **Unsupervised Anomaly Detection:** Real-world network and sensor attacks are constantly evolving, meaning labeled datasets of all future attacks do not exist. An Autoencoder trains *only* on normal operational data, flagging anomalies purely based on elevated reconstruction error (MSE), making it highly resilient to zero-day (previously unseen) attacks.
+As smart buildings automate climate control using IoT sensors, they introduce a critical vulnerability: the physical-digital overlap. If a hacker tampers with room temperature sensors, they can trick the central HVAC [Heating, Ventilation, and Air Conditioning] system into overheating or running continuously. This causes massive energy bills, physical equipment wear, and occupant discomfort.
 
-### 🌡️ Why the DHT11 Sensor? (HVAC Simulation)
-*   **HVAC Climate Regulation:** The DHT11 temperature and humidity sensor is the industry standard for smart climate monitoring. We specifically selected the DHT11 because temperature and humidity are the primary feedback control variables used to regulate **HVAC (Heating, Ventilation, and Air Conditioning) systems** in smart buildings.
-*   **The Threat Vector:** By injecting falsified readings into a DHT11 stream (e.g., simulating extreme heat or zero humidity), an attacker can force a centralized HVAC system to over-cool, over-heat, or run continuously. This results in:
-    1. Massive energy waste and electrical strain on the building.
-    2. Severe occupant discomfort.
-    3. Accelerated wear-and-tear or physical destruction of HVAC compressor/blower hardware.
-*   Simulating DHT11 compromises provides a direct, high-fidelity model of real-world HVAC system attacks and enables us to validate real-time mitigation before physical damage occurs.
+While **enterprise cloud security solutions** exist, they are limited and slow. Uploading millions of sensor readings to the cloud creates latency `[delay]` and relies on constant internet connectivity. If the connection drops, the security drops. 
+
+To solve this, our project implements a **real-time hybrid Intrusion Detection System (IDS)** that runs directly at the smart building edge `[Edge: Local processors in the building, rather than remote cloud servers]`. This provides low-latency, resilient protection that works even if the building loses internet access.
 
 ---
 
-## 🌐 Perspective: The Inevitability of IoT and the Cybersecurity Paradigm Shift
+## 🛠️ Technical Rationale & Tech Stack
 
-### ⚖️ The Paradox of Comfort vs. Control
-> *"One day, someone might lock you inside your own house."*
->
-> In the early days of network architecture, smart devices and environmental sensors were never intended to be connected to the public internet. The rapid rise of the Internet of Things (IoT) introduces billions of interconnected nodes, translating to a broader data footprint and increased potential for remote control over our private spaces.
-> 
-> However, there is no turning back. It is human nature to gravitate toward comfort. There is an undeniable ease in having your room temperature managed automatically based on your daily habits while you are sitting in your office or resting in bed. Because this convenience is irresistible, the expansion of IoT is inevitable—and by extension, so is the rise of sophisticated cyber attacks targeting these entry points.
+Our framework uses a lightweight, highly efficient stack optimized for real-time edge processing:
 
-### 🛑 Moving from Reactive to Proactive Defense
-Historically, cybersecurity has operated as a **reactive rescue mission**: an intrusion occurs, systems fail, and security professionals are called in post-incident for damage control. In critical smart building environments, this model is insufficient. 
-*   **The Real-Time Solution:** We require a centralized, real-time system that continuously monitors network packets and sensor values to predict anomalies before they manifest, safeguarding public and private property.
-*   **Comfort & Active Resilience:** By combining automated AI predictions with deterministic rule filtering, our system achieves both optimal environmental comfort and active resilience against data tampering.
-*   **Human-in-the-Loop Safeguards:** Because absolute automation carries the risk of false-alarm locks or unauthorized overrides, our architecture integrates a human supervisor. This ensures that automated mitigations remain grounded by expert validation, creating a collaborative shield of machine speed and human oversight.
+*   **Deep Learning (PyTorch):** We use an **LSTM Autoencoder** `[LSTM: Long Short-Term Memory model]` configured with `64 → 32` units. Unlike heavy Transformer models, LSTMs are lightweight and designed for sequential temporal data (time-series), establishing a normal behavioral baseline `[normal temperature profile]` of the building and flagging zero-day `[previously unseen]` attacks purely based on elevated reconstruction error.
+*   **Machine Learning (Scikit-Learn):** Runs **Random Forest** and **Isolation Forest** classifiers in parallel to classify specific attack signatures when anomalies are flagged.
+*   **Sensor Simulation (DHT11):** The DHT11 temperature and humidity sensor is the industry standard for climate control. We simulate DHT11 compromises because they model real-world attacks on HVAC systems, showing how fake readings can trigger physical utility failures.
+*   **Web Dashboard (Streamlit & Plotly):** A lightweight dashboard for live visualization of sensor streams and detection flags.
+*   **Data Pipeline (Pandas & Numpy):** Optimizes sliding temporal windows and feature extraction.
+*   **Protocols (MQTT):** Supports asynchronous event-driven streaming from physical edge devices.
 
 ---
 
@@ -80,27 +69,32 @@ graph TD
     H --> I[Human-in-the-Loop Override]
     I --> J[(feedbackmemory.json)]
     J -->|Continuous Adaptation| G
-```
 
-1.  **Tier 1: Unsupervised LSTM Autoencoder (Unsupervised Learning)**
+```
+### 🛡️ Tier Details:
+
+1.  **Tier 1: Unsupervised LSTM Autoencoder (Anomaly Detection)**
     *   Trained exclusively on normal sensor data to establish a baseline of healthy building behavior.
     *   Compresses sequences (`LSTM 64 → LSTM 32`) and reconstructs them.
     *   Anomalies are flagged when the Mean Squared Error (MSE) reconstruction error exceeds a dynamic `3-sigma` threshold (`Mean + 3 * Std`).
+
 2.  **Tier 2: Supervised ML Ensembles (Pattern Classification)**
     *   **Random Forest:** Acts as the primary pattern learner, mapping sequence features (slope, std, range, entropy, spikes, jumps) to attack classes.
-    *   **Gradient Boosting:** Refines predictions for complex patterns by focusing on errors.
+    *   **Gradient Boosting (Currently Unused):** Trained during offline setup, but its predictions are currently bypassed in the final online decision chain. We plan to integrate it using a voting ensemble.
     *   **Isolation Forest:** Operates in parallel to flag novel, unseen anomaly distributions.
+
 3.  **Tier 3: Deterministic Rule Engine (Edge Case Defense)**
     *   Runs alongside ML to catch clear physical limits.
-    *   *Injection Attack Rule:* Triggered if `max_jump > 5.0°C` or `zscore_max > 5.0`.
-    *   *Replay Attack Rule:* Pattern correlation similarity matches matching old history signatures.
-    *   *Drift Attack Rule:* Triggered when `abs(slope) > drift_threshold` (0.05).
-    *   *Drop Attack Rule:* Triggered if `std < 0.1` and `range < 0.4` (freeze detection) or `slope < -0.15` (step drop).
-    *   *Noise Attack Rule:* Triggered if `std > 2.0` and `entropy > 1.5`.
+    *   **Injection Attack Rule:** Triggered if `max_jump > 5.0°C` or `zscore_max > 5.0`.
+    *   **Replay Attack Rule:** Compares the incoming data window to historical signatures in the buffer to catch repeated signals.
+    *   **Drift Attack Rule:** Triggered when `abs(slope) > drift_threshold` (0.05).
+    *   **Drop Attack Rule:** Triggered if `std < 0.1` and `range < 0.4` (freeze detection) or `slope < -0.15` (step drop).
+    *   **Noise Attack Rule:** Triggered if `std > 2.0` and `entropy > 1.5`.
 
 ---
 
 ## 🔄 Human-in-the-Loop Continuous Learning Loop
+
 To prevent AI hallucinations and adapt to seasonal building operations, the framework incorporates a **Continuous Feedback Learning Loop**:
 
 1.  **System Prediction:** The model analyzes a sensor window and outputs a prediction (e.g., `Noise Attack | Confidence: Medium`).
@@ -111,22 +105,40 @@ To prevent AI hallucinations and adapt to seasonal building operations, the fram
 ---
 
 ## 📊 Performance Evaluation Matrix
-Validation results comparing the system before and after the June/July 2026 bug patches:
 
-| Metric | Before Patches | After Patches (Patched Engine) |
-| :--- | :--- | :--- |
+Validation results comparing the system before and after our patches:
+
+| Metric | Before Patches | After Patches (Current Baseline) |
+| :--- | :---: | :---: |
 | **Overall Accuracy** | 52.48% | **78.10%** |
 | **Normal Recall** | 64.18% | **90.16%** (Precision: 94.03%) |
 | **Noise Attack Recall** | 0.00% | **93.85%** (Precision: 64.21%) |
 | **Drift Attack Recall** | 28.03% | **43.80%** (Precision: 55.21%) |
-| **Replay Attack Precision**| 0.00% | **100.00%** (Caught all replayed instances) |
-| **Drop Attack Precision** | 0.00% | **100.00%** (Caught onset drops and freezes) |
+| **Replay Attack Recall** | 0.00% | **3.33%** (Precision: 100.00%) |
+| **Drop Attack Recall** | 0.00% | **13.41%** (Precision: 100.00%) |
 
 ---
 
+## 🚀 Next-Gen Roadmap: Upgrading to a Production-Grade IDS
+
+To bridge the remaining detection gaps and transition this prototype into a commercial-grade, rock-solid smart building security product, we are launching an aggressive technical upgrade roadmap divided into three core pillars:
+### ⚡ A. Hardware & Edge Optimization
+*   **MCU Deployment [ESP32 / ARM Cortex-M]:** We are quantizing `[shrinking model size and math precision]` our PyTorch LSTM models so they can run directly on low-power, $5 microcontrollers inside wall-mounted thermostat sensors.
+*   **ONNX Gateway Acceleration:** Deploying on edge gateway boxes (like Raspberry Pi 5 or NVIDIA Jetson Orin Nano). Exporting models to ONNX Runtime enables sub-millisecond hardware-accelerated predictions for thousands of rooms simultaneously.
+*   **C++/Rust Feature Engineering:** Rewriting the sliding-window feature calculations in C++ or Rust as a Python extension, dropping latency from milliseconds to microseconds.
+
+### 📊 B. Enterprise Data Fusion & Streaming
+*   **Multi-Modal Sensor Fusion:** Temperature alone is easy to spoof. We are integrating CO2, air quality (VOCs), motion detectors (PIR), and HVAC power logs. If temperature spikes but the room is empty and the heater is off, the system automatically shuts down the spoofed stream.
+*   **Event-Driven MQTT Streams:** Moving from static file evaluation to a live, asynchronous `[irregularly timed]` sensor queue using MQTT and Apache Kafka to handle live building telemetry.
+*   **Physics-Informed Thermal Modeling:** Connecting our dataset generator to building energy simulators like EnergyPlus to generate highly realistic normal baselines that factor in sunlight, windows, and insulation.
+
+### 🤖 C. Advanced AI & Architecture Upgrades
+*   **Constant-Time Replay Search via LSH:** Instead of a limited sliding 100-window history, we are implementing Locality-Sensitive Hashing (LSH). LSH converts window waves into short signatures, allowing the detector to query a database of 10,000+ past windows in constant $O(1)$ time to catch replays from days ago instantly.
+*   **Seasonal & Diurnal Adaptive Baselines:** Temperature baselines naturally drift between day and night, and summer and winter. We are deploying an online adaptive baseline threshold that self-adjusts based on weather forecasts and time-of-day.
+*   **Temporal Convolutional Networks (TCNs):** Upgrading from recurrent LSTM models to 1D Temporal CNNs with dilated convolutions. CNNs process time-series windows in parallel, dramatically speeding up training and edge inference.
 ## 📂 Project Structure
 
-```
+```text
 Preventing-Wrong-Decisions-in-Smart-Building-Systems/
 ├── README.md                                                 # Project Documentation
 ├── SECURITY.md                                               # Security reporting guidelines
@@ -155,36 +167,104 @@ Preventing-Wrong-Decisions-in-Smart-Building-Systems/
 │
 └── archive/                                                  # Archived exploratory work
     └── dht11-anomaly-detection-lstm-ae-replay-attack.ipynb   # Jupyter notebook
-```
+
+
+``` 
+# 🚀 Getting Started
+
+## 📋 Prerequisites
+
+> **Recommended:** Python **3.13 (Stable Release)**
+
+> [!NOTE]
+> Python **3.13** is recommended for maximum compatibility.
+>
+> Newer pre-release versions (such as **Python 3.14**) may not yet have stable builds of **TensorFlow** or **PyTorch** available for Windows.
 
 ---
 
-## 🚀 How to Run
+## 1️⃣ Install Dependencies
 
-### 1. Install Prerequisites (Python 3.13 recommended)
 ```bash
 pip install pandas numpy scikit-learn tensorflow streamlit plotly matplotlib
 ```
 
-### 2. Navigate to the Production Codebase
+Alternatively, if a `requirements.txt` file is available:
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+## 2️⃣ Navigate to the Project Directory
+
 ```bash
 cd Preventing-Wrong-Decisions-in-Smart-Building-Systems-IBM
 ```
 
-### 3. Run the Interactive Dashboard Web UI
+---
+
+## 3️⃣ Launch the Interactive Dashboard
+
+Start the Streamlit web application:
+
 ```bash
 streamlit run app.py
 ```
 
-### 4. Run the Automated Simulation Demo
+After execution, open your browser and visit:
+
+```text
+http://localhost:8501
+```
+
+---
+
+## 4️⃣ Run the Hybrid Simulation Demo
+
+Execute the automated demonstration pipeline:
+
 ```bash
 python run_hybrid_demo.py
 ```
 
-### 5. Run the Automated Unit Tests
+---
+
+## 5️⃣ Execute Unit Tests
+
+Run the complete test suite to verify functionality:
+
 ```bash
 python -m unittest test_hybrid_iot_ids.py
 ```
 
 ---
 
+## 🛠 Technology Stack
+
+| Component        | Technology         |
+| ---------------- | ------------------ |
+| Language         | Python 3.13        |
+| Dashboard        | Streamlit          |
+| Machine Learning | TensorFlow         |
+| Data Processing  | Pandas, NumPy      |
+| Visualization    | Plotly, Matplotlib |
+| Testing          | unittest           |
+| Algorithms       | Scikit-learn       |
+
+---
+
+## ✅ Expected Workflow
+
+```text
+Install Dependencies
+        ↓
+Launch Dashboard
+        ↓
+Run Hybrid Demo
+        ↓
+Execute Tests
+        ↓
+Analyze Results
+```
